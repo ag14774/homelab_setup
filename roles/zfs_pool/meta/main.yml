@@ -1,0 +1,5 @@
+galaxy_info:
+  author: Andreas Georgiou
+  description: Create ZFS pool
+  license: MIT
+  min_ansible_version: "2.1"

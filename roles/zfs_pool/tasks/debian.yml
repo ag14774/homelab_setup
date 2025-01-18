@@ -1,0 +1,24 @@
+---
+- name: Check ZFS pool existance
+  ansible.builtin.command: zpool list -Ho name {{ zfs_pool_name }}
+  register: result_pool_list
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Create ZFS pool
+  ansible.builtin.shell: |
+    if [ {{ result_pool_list.rc }} -eq 1 ]
+    then
+      zpool create \
+      {{ '-o' if zfs_pool_options else '' }} {{ zfs_pool_options | join(' -o ') }} \
+      {{ '-O' if zfs_pool_root_dataset_options else '' }} {{ zfs_pool_root_dataset_options | join(' -O ') }} \
+      {{ '-m ' + zfs_pool_mountpoint if zfs_pool_mountpoint else '' }} \
+      {{ zfs_pool_name }} \
+      {{ zfs_pool_mode if zfs_pool_mode else '' }} \
+      {{ zfs_pool_devices | join(' ') }}
+
+      if [ $? -eq 0 ]; then echo "zpool created" ; fi
+    fi
+  register: result
+  changed_when: '"zpool created" in result.stdout'

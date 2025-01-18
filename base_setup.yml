@@ -13,3 +13,13 @@
    - name: Apply udev rules
      ansible.builtin.import_role:
       name: udev
+
+   - name: Create main ZFS pool
+     ansible.builtin.import_role:
+      name: zfs_pool
+     vars:
+      zfs_pool_name: "{{ zfs_main_pool_name }}"
+      zfs_pool_options: "{{ zfs_main_pool_options }}"
+      zfs_pool_root_dataset_options: "{{ zfs_main_pool_root_dataset_options }}"
+      zfs_pool_mode: "{{ zfs_main_pool_mode }}"
+      zfs_pool_devices: "{{ zfs_main_pool_devices }}"

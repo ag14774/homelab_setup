@@ -1,0 +1,5 @@
+---
+zfs_pool_options: false
+zfs_pool_root_dataset_options: false
+zfs_pool_mountpoint: false
+zfs_pool_mode: false
