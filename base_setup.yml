@@ -1,0 +1,15 @@
+- name: Setup base homelab
+  hosts: base
+
+  tasks:
+   - name: Harden SSH server
+     ansible.builtin.import_role:
+      name: sshd_harden
+
+   - name: Disable log compression
+     ansible.builtin.import_role:
+      name: no_log_compress
+
+   - name: Apply udev rules
+     ansible.builtin.import_role:
+      name: udev

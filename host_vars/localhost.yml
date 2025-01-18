@@ -1,0 +1,2 @@
+ansible_connection: local
+my_var: "hi hi hi"

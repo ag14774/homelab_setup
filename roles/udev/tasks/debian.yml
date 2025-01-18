@@ -1,0 +1,6 @@
+---
+- name: Create /etc/udev/rules.d/10-power.rules
+  ansible.builtin.template:
+    src: templates/10-power.rules.j2
+    dest: /etc/udev/rules.d/10-power.rules
+    mode: "0644"

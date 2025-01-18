@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+
+SUBSYSTEM=="pci", ATTR{power/control}=="on", ATTR{power/control}="auto"
+SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}=="max_performance", ATTR{link_power_management_policy}="med_power_with_dipm"
+SUBSYSTEMS=="pci", KERNEL=="ata?", ATTR{device/power/control}=="on", ATTR{device/power/control}="auto"
+SUBSYSTEM=="scsi", DRIVER=="sd", ATTR{power/control}=="on", ATTR{power/control}="auto"

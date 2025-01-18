@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "homelab-setup"
+version = "0.1.0"
+description = ""
+authors = ["Andreas Georgiou"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+ansible = "^11.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ansible-dev-tools = "^24.12.0"
+ansible-lint = {version = "^24.12.2", markers = "platform_system != 'Windows'"}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

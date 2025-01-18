@@ -1,0 +1,7 @@
+{{ ansible_managed | comment }}
+
+PermitEmptyPasswords no
+AllowUsers {{ sshd_harden_allow_users | join(' ') }}
+PermitRootLogin no
+PasswordAuthentication no
+X11Forwarding no

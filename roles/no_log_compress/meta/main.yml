@@ -1,0 +1,5 @@
+galaxy_info:
+  author: Andreas Georgiou
+  description: Role that disables log compression by modifying /etc/logrotate.d/*. This is done because ZFS is already compressing
+  license: MIT
+  min_ansible_version: "2.1"

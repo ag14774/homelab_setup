@@ -1,0 +1,7 @@
+prod: # name of group
+  hosts:
+    base: # hostname
+
+dev:
+  hosts:
+    localhost:

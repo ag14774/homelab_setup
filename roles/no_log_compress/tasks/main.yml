@@ -1,0 +1,6 @@
+---
+# tasks file for no_log_compress
+- name: Disable log compression in /var/log
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true
