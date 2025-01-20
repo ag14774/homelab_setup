@@ -1,0 +1,6 @@
+---
+# tasks file for zfs_encrypted_dataset
+- name: Create ZFS encrypted dataset
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

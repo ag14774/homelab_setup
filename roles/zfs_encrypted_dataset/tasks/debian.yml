@@ -1,0 +1,40 @@
+---
+- name: Check if dataset exists and is encrypted
+  ansible.builtin.command: "zfs get encryption {{ zfs_encrypted_dataset_pool_name }}/encrypted"
+  register: check_result
+  changed_when: false
+  failed_when:
+    - '"dataset does not exist" not in check_result.stderr'  # it exists
+    - '"off" in check_result.stdout'  # and not encrypted -> then fail
+
+- name: Create temporary passphrase file
+  ansible.builtin.copy:
+    content: "{{ zfs_encrypted_dataset_passphrase }}"
+    dest: /tmp/zfs_key.txt
+    mode: "0600"
+    force: true
+  changed_when: true
+  when:
+    - '"dataset does not exist" in check_result.stderr'
+
+- name: Create ZFS encrypted dataset
+  community.general.zfs:
+    name: "{{ zfs_encrypted_dataset_pool_name }}/encrypted"
+    state: present
+    extra_zfs_properties:
+      encryption: 'on'
+      keylocation: "file:///tmp/zfs_key.txt"
+      keyformat: 'passphrase'
+  when:
+    - '"dataset does not exist" in check_result.stderr'
+
+- name: Change keylocation property to prompt
+  ansible.builtin.command: "zfs set keylocation=prompt {{ zfs_encrypted_dataset_pool_name }}/encrypted"
+  changed_when: true
+  when:
+    - '"dataset does not exist" in check_result.stderr'
+
+- name: Delete the temporary file
+  ansible.builtin.file:
+    path: /tmp/zfs_key.txt
+    state: absent

@@ -21,5 +21,21 @@
       zfs_pool_name: "{{ zfs_main_pool_name }}"
       zfs_pool_options: "{{ zfs_main_pool_options }}"
       zfs_pool_root_dataset_options: "{{ zfs_main_pool_root_dataset_options }}"
+      zfs_pool_mountpoint: "{{ zfs_main_pool_mountpoint }}"
       zfs_pool_mode: "{{ zfs_main_pool_mode }}"
       zfs_pool_devices: "{{ zfs_main_pool_devices }}"
+
+   - name: Create ZFS movies dataset
+     community.general.zfs:
+      name: "{{ zfs_main_pool_name }}/movies"
+      state: present
+      extra_zfs_properties:
+       mountpoint: '/movies'
+     become: true
+
+   - name: Create ZFS encrypted dataset
+     ansible.builtin.import_role:
+      name: zfs_encrypted_dataset
+     vars:
+      zfs_encrypted_dataset_pool_name: "{{ zfs_main_pool_name }}"
+      zfs_encrypted_dataset_passphrase: "{{ zfs_main_pool_encryption_passphrase }}"
