@@ -1,0 +1,5 @@
+---
+- name: Update the package cache in debian
+  ansible.builtin.apt:
+    update_cache: true
+  become: true

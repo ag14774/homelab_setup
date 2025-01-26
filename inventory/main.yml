@@ -1,3 +1,4 @@
+---
 prod: # name of group
   hosts:
     base: # hostname

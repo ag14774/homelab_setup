@@ -1,0 +1,6 @@
+---
+# tasks file for add_backports
+- name: Add backports repository for debian
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

@@ -1,6 +1,6 @@
 ---
 galaxy_info:
   author: Andreas Georgiou
-  description: Create ZFS pool
+  description: Setup cockpit server management
   license: MIT
   min_ansible_version: "2.1"

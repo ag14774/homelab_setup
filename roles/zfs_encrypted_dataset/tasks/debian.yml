@@ -4,8 +4,8 @@
   register: check_result
   changed_when: false
   failed_when:
-    - '"dataset does not exist" not in check_result.stderr'  # it exists
-    - '"off" in check_result.stdout'  # and not encrypted -> then fail
+    - '"dataset does not exist" not in check_result.stderr' # it exists
+    - '"off" in check_result.stdout' # and not encrypted -> then fail
 
 - name: Create temporary passphrase file
   ansible.builtin.copy:
@@ -22,9 +22,9 @@
     name: "{{ zfs_encrypted_dataset_pool_name }}/encrypted"
     state: present
     extra_zfs_properties:
-      encryption: 'on'
+      encryption: "on"
       keylocation: "file:///tmp/zfs_key.txt"
-      keyformat: 'passphrase'
+      keyformat: "passphrase"
   when:
     - '"dataset does not exist" in check_result.stderr'
 

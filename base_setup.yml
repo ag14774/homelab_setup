@@ -1,41 +1,60 @@
+---
 - name: Setup base homelab
   hosts: base
 
   tasks:
-   - name: Harden SSH server
-     ansible.builtin.import_role:
-      name: sshd_harden
+    - name: Add backports for debian
+      ansible.builtin.import_role:
+        name: add_backports
 
-   - name: Disable log compression
-     ansible.builtin.import_role:
-      name: no_log_compress
+    - name: Harden SSH server
+      ansible.builtin.import_role:
+        name: sshd_harden
 
-   - name: Apply udev rules
-     ansible.builtin.import_role:
-      name: udev
+    - name: Disable log compression
+      ansible.builtin.import_role:
+        name: no_log_compress
 
-   - name: Create main ZFS pool
-     ansible.builtin.import_role:
-      name: zfs_pool
-     vars:
-      zfs_pool_name: "{{ zfs_main_pool_name }}"
-      zfs_pool_options: "{{ zfs_main_pool_options }}"
-      zfs_pool_root_dataset_options: "{{ zfs_main_pool_root_dataset_options }}"
-      zfs_pool_mountpoint: "{{ zfs_main_pool_mountpoint }}"
-      zfs_pool_mode: "{{ zfs_main_pool_mode }}"
-      zfs_pool_devices: "{{ zfs_main_pool_devices }}"
+    - name: Apply udev rules
+      ansible.builtin.import_role:
+        name: udev
 
-   - name: Create ZFS movies dataset
-     community.general.zfs:
-      name: "{{ zfs_main_pool_name }}/movies"
-      state: present
-      extra_zfs_properties:
-       mountpoint: '/movies'
-     become: true
+    - name: Install cockpit server
+      ansible.builtin.import_role:
+        name: cockpit_setup
+      vars:
+        cockpit_setup_is_primary: "{{ cockpit_server_is_primary }}"
 
-   - name: Create ZFS encrypted dataset
-     ansible.builtin.import_role:
-      name: zfs_encrypted_dataset
-     vars:
-      zfs_encrypted_dataset_pool_name: "{{ zfs_main_pool_name }}"
-      zfs_encrypted_dataset_passphrase: "{{ zfs_main_pool_encryption_passphrase }}"
+    - name: Create main ZFS pool
+      ansible.builtin.import_role:
+        name: zfs_pool
+      vars:
+        zfs_pool_name: "{{ zfs_main_pool_name }}"
+        zfs_pool_options: "{{ zfs_main_pool_options }}"
+        zfs_pool_root_dataset_options: "{{ zfs_main_pool_root_dataset_options }}"
+        zfs_pool_mountpoint: "{{ zfs_main_pool_mountpoint }}"
+        zfs_pool_mode: "{{ zfs_main_pool_mode }}"
+        zfs_pool_devices: "{{ zfs_main_pool_devices }}"
+
+    - name: Create ZFS movies dataset
+      community.general.zfs:
+        name: "{{ zfs_main_pool_name }}/movies"
+        state: present
+        extra_zfs_properties:
+          mountpoint: "/tank/movies"
+      become: true
+
+    - name: Create ZFS encrypted dataset
+      ansible.builtin.import_role:
+        name: zfs_encrypted_dataset
+      vars:
+        zfs_encrypted_dataset_pool_name: "{{ zfs_main_pool_name }}"
+        zfs_encrypted_dataset_passphrase: "{{ zfs_main_pool_encryption_passphrase }}"
+
+    - name: Create ZFS samba dataset
+      community.general.zfs:
+        name: "{{ zfs_main_pool_name }}/encrypted/samba"
+        state: present
+        extra_zfs_properties:
+          mountpoint: "/tank/samba"
+      become: true

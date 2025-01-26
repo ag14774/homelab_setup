@@ -1,0 +1,6 @@
+---
+# tasks file for cockpit_setup
+- name: Setup cockpit in debian
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

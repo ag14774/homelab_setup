@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Andreas Georgiou
   description: Create ZFS encrypted dataset tank/encrypted using a passphrase

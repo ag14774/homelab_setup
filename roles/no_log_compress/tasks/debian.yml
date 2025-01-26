@@ -1,3 +1,4 @@
+---
 - name: Fetch all filenames in /etc/logrotate.d/
   ansible.builtin.find:
     paths: /etc/logrotate.d/
@@ -6,6 +7,6 @@
 - name: Comment out compress keyword in /etc/logrotate.d/*
   ansible.builtin.replace:
     path: "{{ item }}"
-    regexp: '(^|[^#y])(compress)'
-    replace: '\1#\2'
+    regexp: "(^|[^#y])(compress)"
+    replace: "\\1#\\2"
   loop: "{{ find_result.files | map(attribute='path') }}"

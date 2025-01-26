@@ -1,0 +1,21 @@
+---
+- name: Ensure that cockpit is installed
+  ansible.builtin.apt:
+    name: "cockpit"
+    state: present
+    default_release: "{{ ansible_distribution_release }}-backports"
+    update_cache: true
+    install_recommends: true
+
+- name: Enable service cockpit.socket and ensure it is not masked
+  ansible.builtin.systemd_service:
+    name: cockpit.socket
+    enabled: true
+    masked: false
+  when: cockpit_setup_is_primary | bool
+
+- name: Disable service cockpit.socket
+  ansible.builtin.systemd_service:
+    name: cockpit.socket
+    enabled: false
+  when: "not cockpit_setup_is_primary | bool"

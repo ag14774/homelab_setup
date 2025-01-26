@@ -1,0 +1,16 @@
+---
+- name: Add backports repository
+  ansible.builtin.deb822_repository:
+    name: backports
+    types:
+      - deb
+      - deb-src
+    uris: https://mirror.init7.net/debian
+    suites: "{{ ansible_distribution_release }}-backports"
+    components:
+      - main
+      - contrib
+  notify: Update the package cache in debian
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

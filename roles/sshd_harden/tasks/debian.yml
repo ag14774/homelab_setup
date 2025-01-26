@@ -2,7 +2,7 @@
 - name: Ensure that the latest version of openssh-server is installed
   ansible.builtin.apt:
     name: "openssh-server"
-    state: latest  # noqa package-latest
+    state: latest # noqa package-latest
     update_cache: true
 
 - name: Create /etc/ssh/sshd_config.d/99_sshd_config.conf

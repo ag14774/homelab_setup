@@ -1,7 +1,7 @@
 # zfs_main
 ---
 zfs_main_pool_name: "tank"
-zfs_main_pool_options: 
+zfs_main_pool_options:
   - "ashift=12"
   - "autotrim=on"
 zfs_main_pool_mountpoint: "none"
@@ -20,3 +20,5 @@ zfs_main_pool_root_dataset_options:
   - "compression=lz4"
   - "canmount=off"
 zfs_main_pool_encryption_passphrase: "{{ vault_zfs_main_pool_encryption_passphrase }}"
+
+cockpit_server_is_primary: true
