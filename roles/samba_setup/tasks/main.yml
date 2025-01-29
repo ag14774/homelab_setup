@@ -1,0 +1,6 @@
+---
+# tasks file for samba_setup
+- name: Setup samba server in debian
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

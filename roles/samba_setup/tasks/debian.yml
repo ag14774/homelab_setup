@@ -1,0 +1,62 @@
+---
+- name: Ensure that samba is installed
+  ansible.builtin.apt:
+    name: "samba"
+    state: present
+    update_cache: true
+
+- name: Ensure group "smbusers" exists
+  ansible.builtin.group:
+    name: "smbusers"
+    state: present
+
+- name: Create SMB accounts
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    password: "!"
+    shell: "/sbin/nologin"
+    append: true
+    group: "smbusers"
+    create_home: false
+  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+
+- name: Create SMB common directory
+  ansible.builtin.file:
+    path: "{{ samba_setup_root }}/common"
+    state: directory
+    owner: root
+    group: smbusers
+    mode: "2775"
+
+- name: Create SMB private directories
+  ansible.builtin.file:
+    path: "{{ samba_setup_root }}/{{ item.name }}"
+    state: directory
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: "2775"
+  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+
+- name: Configure Samba users.
+  ansible.builtin.shell: >
+    (pdbedit --user={{ item.name }} 2>&1 > /dev/null)
+    || smbpasswd -s -a {{ item.name }}
+  args:
+    stdin: "{{ item.pass }}\n{{ item.pass }}"
+  register: smbpasswd
+  changed_when: "'Added user' in smbpasswd.stdout"
+  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create /etc/samba/smb.conf
+  ansible.builtin.template:
+    src: templates/smb.conf.j2
+    dest: /etc/samba/smb.conf
+    mode: "0644"
+
+- name: Enable smbd service
+  ansible.builtin.systemd_service:
+    name: smbd
+    enabled: true
+    masked: false

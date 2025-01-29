@@ -58,3 +58,10 @@
         extra_zfs_properties:
           mountpoint: "/tank/samba"
       become: true
+
+    - name: Setup Samba server
+      ansible.builtin.import_role:
+        name: samba_setup
+      vars:
+        samba_setup_users: "{{ samba_users }}"
+        samba_setup_root: "{{ samba_root }}"

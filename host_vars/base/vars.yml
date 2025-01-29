@@ -1,5 +1,5 @@
-# zfs_main
 ---
+# zfs_main
 zfs_main_pool_name: "tank"
 zfs_main_pool_options:
   - "ashift=12"
@@ -21,4 +21,9 @@ zfs_main_pool_root_dataset_options:
   - "canmount=off"
 zfs_main_pool_encryption_passphrase: "{{ vault_zfs_main_pool_encryption_passphrase }}"
 
+# cockpit
 cockpit_server_is_primary: true
+
+# samba
+samba_users: "{{ vault_samba_users }}"
+samba_root: "/tank/samba"

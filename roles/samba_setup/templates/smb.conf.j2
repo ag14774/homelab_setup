@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+[common]
+    path = {{ samba_setup_root }}/common
+    read only = no
+    writeable = yes
+    browseable = yes
+    valid users = @smbusers
+    create mask = 0644
+    directory mask = 0755
+
+{% for item in samba_setup_users | dict2items(key_name='name', value_name='pass') %}
+[{{ item.name }}]
+    path = {{ samba_setup_root }}/{{ item.name }}
+    read only = no
+    writeable = yes
+    browseable = yes
+    valid users = {{ item.name }}
+    create mask = 0640
+    directory mask = 0750
+
+{% endfor %}
