@@ -11,10 +11,6 @@
       ansible.builtin.import_role:
         name: sshd_harden
 
-    - name: Disable log compression
-      ansible.builtin.import_role:
-        name: no_log_compress
-
     - name: Apply udev rules
       ansible.builtin.import_role:
         name: udev
@@ -65,3 +61,7 @@
       vars:
         samba_setup_users: "{{ samba_users }}"
         samba_setup_root: "{{ samba_root }}"
+
+    - name: Disable log compression
+      ansible.builtin.import_role:
+        name: no_log_compress

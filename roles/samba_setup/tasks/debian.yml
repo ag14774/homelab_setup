@@ -10,15 +10,29 @@
     name: "smbusers"
     state: present
 
-- name: Create SMB accounts
+- name: Create SMB login accounts
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    update_password: "on_create"
+    append: true
+    groups: "smbusers"
+  loop: "{{ samba_setup_users }}"
+  when: "item.login"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create SMB non-login accounts
   ansible.builtin.user:
     name: "{{ item.name }}"
     password: "!"
     shell: "/sbin/nologin"
     append: true
-    group: "smbusers"
+    groups: "smbusers"
     create_home: false
-  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+  loop: "{{ samba_setup_users }}"
+  when: "not item.login"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Create SMB common directory
   ansible.builtin.file:
@@ -26,7 +40,7 @@
     state: directory
     owner: root
     group: smbusers
-    mode: "2775"
+    mode: "2770"
 
 - name: Create SMB private directories
   ansible.builtin.file:
@@ -34,8 +48,10 @@
     state: directory
     owner: "{{ item.name }}"
     group: "{{ item.name }}"
-    mode: "2775"
-  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+    mode: "2770"
+  loop: "{{ samba_setup_users }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Configure Samba users.
   ansible.builtin.shell: >
@@ -45,7 +61,7 @@
     stdin: "{{ item.pass }}\n{{ item.pass }}"
   register: smbpasswd
   changed_when: "'Added user' in smbpasswd.stdout"
-  loop: "{{ samba_setup_users | dict2items(key_name='name', value_name='pass') }}"
+  loop: "{{ samba_setup_users }}"
   loop_control:
     label: "{{ item.name }}"
 
