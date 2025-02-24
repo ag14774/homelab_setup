@@ -1,0 +1,20 @@
+---
+- name: Setup docker swarm on base
+  hosts: base
+
+  tasks:
+    - name: Install docker
+      ansible.builtin.import_role:
+        name: docker_setup
+
+    - name: Init a new swarm with default parameters
+      community.docker.docker_swarm:
+        state: present
+        advertise_addr: "{{ ansible_default_ipv4['address'] }}"
+      become: true
+
+    - name: Setup traefik
+      ansible.builtin.import_role:
+        name: traefik_setup
+      vars:
+        traefik_setup_version: "{{ traefik_version }}"

@@ -1,0 +1,32 @@
+---
+- name: Create traefik overlay network
+  community.docker.docker_network:
+    name: proxy_net
+    driver: overlay
+    state: present
+
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/traefik"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy traefik files
+  ansible.builtin.template:
+    src: templates/{{ item }}.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/traefik/{{ item }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+  loop:
+    - compose.yml
+    - traefik.toml
+
+- name: Deploy proxy stack (traefik)
+  community.docker.docker_stack:
+    state: present
+    name: proxy
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/traefik/compose.yml"

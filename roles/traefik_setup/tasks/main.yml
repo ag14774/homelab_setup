@@ -1,0 +1,6 @@
+---
+# tasks file for traefik_setup
+- name: Setup Traefik in docker swarm (debian)
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

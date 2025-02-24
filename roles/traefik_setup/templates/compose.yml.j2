@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+
+version: "3.3"
+
+services:
+
+  traefik:
+    image: "traefik:{{ traefik_setup_version }}"
+    networks:
+      - proxy_net
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.toml:/etc/traefik/traefik.toml:ro"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - "node.role == manager"
+
+networks:
+  proxy_net:
+    external: true
