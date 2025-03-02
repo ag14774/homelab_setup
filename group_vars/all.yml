@@ -4,3 +4,6 @@ traefik_version: v3.3 # version of traefik
 
 # Technitium
 technitium_version: "13.4.3"
+
+# Jellyfin
+jellyfin_version: "10.10.6"

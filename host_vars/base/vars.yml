@@ -31,3 +31,6 @@ samba_root: "/tank/samba"
 # technitium
 dns_smb_user: "{{ vault_dns_smb_user }}"
 dns_dashboard_password: "{{ vault_dns_dashboard_password }}"
+
+# media
+media_path: "/tank/media"

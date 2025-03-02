@@ -29,3 +29,11 @@
         technitium_setup_smb_pass: "{{ (samba_users | items2dict(key_name='name', value_name='pass'))[dns_smb_user] }}"
         # 'base' will always be the SMB/NAS server so even if we run this on another host, we want to use base's IP here
         technitium_setup_smb_path: "//{{ hostvars['base']['ansible_default_ipv4']['address'] }}/{{ dns_smb_user }}"
+
+    - name: Setup media stack
+      ansible.builtin.import_role:
+        name: media_setup
+      vars:
+        media_setup_jellyfin_version: "{{ jellyfin_version }}"
+        media_setup_media_path: "{{ media_path }}"
+        media_setup_placement_hostname: 'base'

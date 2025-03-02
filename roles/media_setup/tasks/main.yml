@@ -1,0 +1,6 @@
+---
+# tasks file for media_setup
+- name: Setup the media stack in docker swarm (debian)
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

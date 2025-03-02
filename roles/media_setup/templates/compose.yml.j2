@@ -1,0 +1,39 @@
+# {{ ansible_managed }}
+
+version: "3.3"
+
+services:
+  jellyfin:
+    image: "jellyfin/jellyfin:{{ media_setup_jellyfin_version }}"
+    user: 1003:1004
+    networks:
+      - proxy_net
+    environment:
+      - TZ=Europe/Zurich
+      - JELLYFIN_PublishedServerUrl=http://jellyfin.home
+    volumes:
+      - "media_config_vol_jellyfin_config:/config"
+      - "media_config_vol_jellyfin_cache:/cache"
+      - "{{ media_setup_media_path }}:/media"
+    deploy:
+      replicas: 1
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.jellyfin-homepage.entrypoints=web
+        - traefik.http.routers.jellyfin-homepage.rule=Host(`jellyfin.home`)
+        - traefik.http.routers.jellyfin-homepage.service=jellyfin-srvc
+        # Tell Traefik to use the port 8096 to connect to `jellyfin`
+        - traefik.http.services.jellyfin-srvc.loadbalancer.server.port=8096
+
+volumes:
+    media_config_vol_jellyfin_config:
+      external: true  # External SMB volume that can be shared by replicas
+    media_config_vol_jellyfin_cache:
+      external: true  # External SMB volume that can be shared by replicas
+
+networks:
+  proxy_net:
+    external: true

@@ -1,0 +1,51 @@
+---
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/media_stack"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy media stack compose file
+  ansible.builtin.template:
+    src: templates/compose.yml.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/media_stack/compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+
+- name: Create a temporary container to setup media_config_vol
+  community.docker.docker_container:
+    name: media_config_vol_setup
+    image: alpine:latest
+    command: mkdir /data/jellyfin_config /data/jellyfin_cache
+    state: started
+    detach: false
+    recreate: true
+    cleanup: true
+    volumes:
+      - media_config_vol:/data
+  register: container_out
+  changed_when: "'File exists' not in container_out['container']['Output']"
+  failed_when: false
+
+- name: Create a docker SMB volume
+  community.docker.docker_volume:
+    name: "media_config_vol_{{ item }}"
+    state: present
+    recreate: "options-changed"
+    driver_options:
+      type: cifs
+      o: "username={{ media_setup_smb_user }},password={{ media_setup_smb_pass }},vers=3,uid=1003,gid=1004,file_mode=0777,dir_mode=0777"
+      device: "{{ media_setup_smb_path }}/{{ item }}"
+  loop:
+    - "jellyfin_config"
+    - "jellyfin_cache"
+
+- name: Deploy media stack
+  community.docker.docker_stack:
+    state: present
+    name: media
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/media_stack/compose.yml"

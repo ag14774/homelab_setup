@@ -32,12 +32,12 @@
         zfs_pool_mode: "{{ zfs_main_pool_mode }}"
         zfs_pool_devices: "{{ zfs_main_pool_devices }}"
 
-    - name: Create ZFS movies dataset
+    - name: Create ZFS media dataset
       community.general.zfs:
-        name: "{{ zfs_main_pool_name }}/movies"
+        name: "{{ zfs_main_pool_name }}/media"
         state: present
         extra_zfs_properties:
-          mountpoint: "/tank/movies"
+          mountpoint: "/tank/media"
       become: true
 
     - name: Create ZFS encrypted dataset
