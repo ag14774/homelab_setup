@@ -27,3 +27,7 @@ cockpit_server_is_primary: true
 # samba
 samba_users: "{{ vault_samba_users }}"
 samba_root: "/tank/samba"
+
+# technitium
+dns_smb_user: "{{ vault_dns_smb_user }}"
+dns_dashboard_password: "{{ vault_dns_dashboard_password }}"

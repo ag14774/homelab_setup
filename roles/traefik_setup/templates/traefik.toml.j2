@@ -3,9 +3,13 @@
 [api]
 dashboard = false
 
+[log]
+level = "INFO"
+
 [providers.swarm]
 exposedByDefault = false
 endpoint = "unix:///var/run/docker.sock"
+network = "proxy_net"
 
 [entryPoints]
   [entryPoints.web]

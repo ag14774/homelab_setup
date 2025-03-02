@@ -1,0 +1,39 @@
+---
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/technitium"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy Technitium compose file
+  ansible.builtin.template:
+    src: templates/compose.yml.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/technitium/compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+
+- name: Create a docker SMB volume
+  community.docker.docker_volume:
+    name: dns_config_vol
+    state: present
+    recreate: "options-changed"
+    driver_options:
+      type: cifs
+      o: "username={{ technitium_setup_smb_user }},password={{ technitium_setup_smb_pass }},vers=3"
+      device: "{{ technitium_setup_smb_path }}"
+
+- name: Create docker secret for Technitium dashboard
+  community.docker.docker_secret:
+    name: technitium_password
+    data: "{{ technitium_setup_dashboard_password }}"
+    state: present
+
+- name: Deploy DNS stack (Technitium)
+  community.docker.docker_stack:
+    state: present
+    name: dns
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/technitium/compose.yml"
