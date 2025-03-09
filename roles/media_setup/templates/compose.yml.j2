@@ -3,20 +3,118 @@
 version: "3.3"
 
 services:
+  qbittorrent:
+    image: "lscr.io/linuxserver/qbittorrent:{{ media_setup_qbittorrent_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - PUID={{ media_srvc_uid }}
+      - PGID={{ media_srvc_gid }}
+      - TZ=Europe/Zurich
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881 # Port for inbound peer connections, we leave it closed, open if needed
+    volumes:
+      - "{{ media_setup_media_path }}/qbittorrent_config:/config"
+      - "{{ media_setup_media_path }}/media:/media"  # NOTE: Remember to configure the dir via the WebUI to /media/downloads
+    deploy:
+      replicas: 1  # Cannot scale well over 1 replica due to not using SMB share
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.qbittorrent-ui.entrypoints=web
+        - traefik.http.routers.qbittorrent-ui.rule=Host(`torrents.home`)
+        - traefik.http.routers.qbittorrent-ui.service=qbittorrent-srvc
+        # Tell Traefik to use the port 8080 to connect to `qbittorrent`
+        - traefik.http.services.qbittorrent-srvc.loadbalancer.server.port=8080
+
+  radarr:
+    image: "lscr.io/linuxserver/radarr:{{ media_setup_radarr_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - PUID={{ media_srvc_uid }}
+      - PGID={{ media_srvc_gid }}
+      - TZ=Europe/Zurich
+    volumes:
+      - "{{ media_setup_media_path }}/radarr_config:/config"
+      - "{{ media_setup_media_path }}/media:/media"  # NOTE: Remember to configure the dirs in UI /media/downloads and /media/movies
+    deploy:
+      replicas: 1  # Cannot scale well over 1 replica due to not using SMB share
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.radarr-ui.entrypoints=web
+        - traefik.http.routers.radarr-ui.rule=Host(`radarr.home`)
+        - traefik.http.routers.radarr-ui.service=radarr-srvc
+        # Tell Traefik to use the port 7878 to connect to `radarr`
+        - traefik.http.services.radarr-srvc.loadbalancer.server.port=7878
+
+  sonarr:
+    image: "lscr.io/linuxserver/sonarr:{{ media_setup_sonarr_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - PUID={{ media_srvc_uid }}
+      - PGID={{ media_srvc_gid }}
+      - TZ=Europe/Zurich
+    volumes:
+      - "{{ media_setup_media_path }}/sonarr_config:/config"
+      - "{{ media_setup_media_path }}/media:/media"  # NOTE: Remember to configure the dirs in UI /media/downloads and /media/tv
+    deploy:
+      replicas: 1  # Cannot scale well over 1 replica due to not using SMB share
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.sonarr-ui.entrypoints=web
+        - traefik.http.routers.sonarr-ui.rule=Host(`sonarr.home`)
+        - traefik.http.routers.sonarr-ui.service=sonarr-srvc
+        # Tell Traefik to use the port 8989 to connect to `sonarr`
+        - traefik.http.services.sonarr-srvc.loadbalancer.server.port=8989
+
+  bazarr:
+    image: "lscr.io/linuxserver/bazarr:{{ media_setup_bazarr_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - PUID={{ media_srvc_uid }}
+      - PGID={{ media_srvc_gid }}
+      - TZ=Europe/Zurich
+    volumes:
+      - "{{ media_setup_media_path }}/bazarr_config:/config"
+      - "{{ media_setup_media_path }}/media:/media"  # NOTE: Remember to configure the dirs in UI /media/movies and /media/tv
+    deploy:
+      replicas: 1  # Cannot scale well over 1 replica due to not using SMB share
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.bazarr-ui.entrypoints=web
+        - traefik.http.routers.bazarr-ui.rule=Host(`bazarr.home`)
+        - traefik.http.routers.bazarr-ui.service=bazarr-srvc
+        # Tell Traefik to use the port 6767 to connect to `bazarr`
+        - traefik.http.services.bazarr-srvc.loadbalancer.server.port=6767
+
   jellyfin:
     image: "jellyfin/jellyfin:{{ media_setup_jellyfin_version }}"
-    user: 1003:1004
+    user: "{{ media_srvc_uid }}:{{ media_srvc_gid }}"
     networks:
       - proxy_net
     environment:
       - TZ=Europe/Zurich
       - JELLYFIN_PublishedServerUrl=http://jellyfin.home
     volumes:
-      - "media_config_vol_jellyfin_config:/config"
-      - "media_config_vol_jellyfin_cache:/cache"
-      - "{{ media_setup_media_path }}:/media"
+      - "{{ media_setup_media_path }}/jellyfin_config:/config"
+      - "{{ media_setup_media_path }}/jellyfin_cache:/cache"
+      - "{{ media_setup_media_path }}/media:/media"
     deploy:
-      replicas: 1
+      replicas: 1  # Jellyfin cannot scale well over 1 replica due to the sqlite db
       placement:
           constraints:
               - node.hostname == {{ media_setup_placement_hostname }}
@@ -27,12 +125,6 @@ services:
         - traefik.http.routers.jellyfin-homepage.service=jellyfin-srvc
         # Tell Traefik to use the port 8096 to connect to `jellyfin`
         - traefik.http.services.jellyfin-srvc.loadbalancer.server.port=8096
-
-volumes:
-    media_config_vol_jellyfin_config:
-      external: true  # External SMB volume that can be shared by replicas
-    media_config_vol_jellyfin_cache:
-      external: true  # External SMB volume that can be shared by replicas
 
 networks:
   proxy_net:

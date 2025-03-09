@@ -7,6 +7,36 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
 
+- name: Create media_srvc user account
+  ansible.builtin.user:
+    name: "media_srvc"
+    password: "!"
+    shell: "/sbin/nologin"
+    create_home: false
+
+- name: Get UID and GID of media_srvc user
+  ansible.builtin.getent:
+    database: passwd
+
+- name: Create directories for movies and configs
+  ansible.builtin.file:
+    path: "{{ media_setup_media_path }}/{{ item }}"
+    state: directory
+    recurse: true
+    owner: "{{ getent_passwd['media_srvc'].1 }}"
+    group: "{{ getent_passwd['media_srvc'].2 }}"
+  loop:
+    - "media"
+    - "media/movies"
+    - "media/tv"
+    - "media/downloads"
+    - "jellyfin_config"
+    - "jellyfin_cache"
+    - "qbittorrent_config"
+    - "radarr_config"
+    - "sonarr_config"
+    - "bazarr_config"
+
 - name: Copy media stack compose file
   ansible.builtin.template:
     src: templates/compose.yml.j2
@@ -14,34 +44,9 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: "0644"
-
-- name: Create a temporary container to setup media_config_vol
-  community.docker.docker_container:
-    name: media_config_vol_setup
-    image: alpine:latest
-    command: mkdir /data/jellyfin_config /data/jellyfin_cache
-    state: started
-    detach: false
-    recreate: true
-    cleanup: true
-    volumes:
-      - media_config_vol:/data
-  register: container_out
-  changed_when: "'File exists' not in container_out['container']['Output']"
-  failed_when: false
-
-- name: Create a docker SMB volume
-  community.docker.docker_volume:
-    name: "media_config_vol_{{ item }}"
-    state: present
-    recreate: "options-changed"
-    driver_options:
-      type: cifs
-      o: "username={{ media_setup_smb_user }},password={{ media_setup_smb_pass }},vers=3,uid=1003,gid=1004,file_mode=0777,dir_mode=0777"
-      device: "{{ media_setup_smb_path }}/{{ item }}"
-  loop:
-    - "jellyfin_config"
-    - "jellyfin_cache"
+  vars:  # Internal vars - should not be set by importers of this role
+    media_srvc_uid: "{{ getent_passwd['media_srvc'].1 }}"
+    media_srvc_gid: "{{ getent_passwd['media_srvc'].2 }}"
 
 - name: Deploy media stack
   community.docker.docker_stack:

@@ -35,5 +35,9 @@
         name: media_setup
       vars:
         media_setup_jellyfin_version: "{{ jellyfin_version }}"
+        media_setup_qbittorrent_version: "{{ qbittorrent_version }}"
+        media_setup_radarr_version: "{{ radarr_version }}"
+        media_setup_sonarr_version: "{{ sonarr_version }}"
+        media_setup_bazarr_version: "{{ bazarr_version }}"
         media_setup_media_path: "{{ media_path }}"
         media_setup_placement_hostname: 'base'

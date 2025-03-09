@@ -1,2 +1,6 @@
 ---
 media_setup_jellyfin_version: "10.10.6"
+media_setup_qbittorrent_version: "5.0.4"
+media_setup_radarr_version: "5.19.3"
+media_setup_sonarr_version: "4.0.13"
+media_setup_bazarr_version: "1.5.1"

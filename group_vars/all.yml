@@ -5,5 +5,9 @@ traefik_version: v3.3 # version of traefik
 # Technitium
 technitium_version: "13.4.3"
 
-# Jellyfin
+# Media
 jellyfin_version: "10.10.6"
+qbittorrent_version: "5.0.4"
+radarr_version: "5.19.3"
+sonarr_version: "4.0.13"
+bazarr_version: "1.5.1"
