@@ -36,6 +36,7 @@
     - "radarr_config"
     - "sonarr_config"
     - "bazarr_config"
+    - "prowlarr_config"
 
 - name: Copy media stack compose file
   ansible.builtin.template:

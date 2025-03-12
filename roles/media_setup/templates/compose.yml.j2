@@ -101,6 +101,29 @@ services:
         # Tell Traefik to use the port 6767 to connect to `bazarr`
         - traefik.http.services.bazarr-srvc.loadbalancer.server.port=6767
 
+  prowlarr:
+    image: "lscr.io/linuxserver/prowlarr:{{ media_setup_prowlarr_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - PUID={{ media_srvc_uid }}
+      - PGID={{ media_srvc_gid }}
+      - TZ=Europe/Zurich
+    volumes:
+      - "{{ media_setup_media_path }}/prowlarr_config:/config"
+    deploy:
+      replicas: 1  # Cannot scale well over 1 replica due to not using SMB share
+      placement:
+          constraints:
+              - node.hostname == {{ media_setup_placement_hostname }}
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.prowlarr-ui.entrypoints=web
+        - traefik.http.routers.prowlarr-ui.rule=Host(`prowlarr.home`)
+        - traefik.http.routers.prowlarr-ui.service=prowlarr-srvc
+        # Tell Traefik to use the port 9696 to connect to `prowlarr`
+        - traefik.http.services.prowlarr-srvc.loadbalancer.server.port=9696
+
   jellyfin:
     image: "jellyfin/jellyfin:{{ media_setup_jellyfin_version }}"
     user: "{{ media_srvc_uid }}:{{ media_srvc_gid }}"
