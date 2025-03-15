@@ -1,0 +1,62 @@
+---
+# TODO: also install rclone
+- name: Ensure that restic is installed
+  ansible.builtin.apt:
+    name:
+      - "restic"
+      - "rclone"
+    state: present
+    update_cache: true
+
+- name: Initialize restic repository
+  ansible.builtin.command: "restic init"
+  environment:
+    RESTIC_REPOSITORY: "{{ restic_setup_backup_path }}"
+    RESTIC_PASSWORD: "{{ restic_setup_backup_pass }}"
+  register: restic_init
+  changed_when: "'created restic repository' in restic_init.stdout"
+  failed_when:
+    - restic_init.rc != 0
+    - not 'config file already exists' in restic_init.stderr
+    - not 'config already initialized' in restic_init.stderr
+    - not 'config already exists' in restic_init.stderr
+
+- name: Create directory for restic-related keys
+  ansible.builtin.file:
+    path: "{{ restic_setup_key_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Write restic key to file
+  ansible.builtin.copy:
+    content: "{{ restic_setup_backup_pass }}"
+    dest: "{{ restic_setup_key_dir }}/repo.key"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy google cloud config to directory
+  ansible.builtin.copy:
+    content: "{{ restic_setup_gcs_credentials_b64 | ansible.builtin.b64decode }}"
+    dest: "{{ restic_setup_key_dir }}/gcs.json"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy rclone.conf file to /root/.config/rclone/rclone.conf
+  ansible.builtin.template:
+    src: templates/rclone.conf.j2
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy backup script to cron.weekly
+  ansible.builtin.template:
+    src: templates/backup.sh.j2
+    dest: "/etc/cron.weekly/backup.sh"
+    owner: root
+    group: root
+    mode: "0755"

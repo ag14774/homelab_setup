@@ -55,6 +55,29 @@
           mountpoint: "/tank/samba"
       become: true
 
+    - name: Create backup ZFS pool
+      ansible.builtin.import_role:
+        name: zfs_pool
+      vars:
+        zfs_pool_name: "{{ zfs_backup_pool_name }}"
+        zfs_pool_options: "{{ zfs_backup_pool_options }}"
+        zfs_pool_root_dataset_options: "{{ zfs_backup_pool_root_dataset_options }}"
+        zfs_pool_mountpoint: "{{ zfs_backup_pool_mountpoint }}"
+        zfs_pool_mode: "{{ zfs_backup_pool_mode }}"
+        zfs_pool_devices: "{{ zfs_backup_pool_devices }}"
+
+    - name: Setup backups using restic
+      ansible.builtin.import_role:
+        name: restic_setup
+      vars:
+        restic_setup_backup_path: "{{ restic_backup_path }}"
+        restic_setup_backup_pass: "{{ restic_backup_pass }}"
+        restic_setup_key_dir: "{{ restic_key_dir }}"
+        restic_setup_gcs_project_number: "{{ restic_gcs_project_number }}"
+        restic_setup_gcs_bucket_name: "{{ restic_gcs_bucket_name }}"
+        restic_setup_gcs_credentials_b64: "{{ restic_gcs_credentials_b64 }}"
+        restic_setup_srces: "{{ restic_srces }}"
+
     - name: Setup Samba server
       ansible.builtin.import_role:
         name: samba_setup

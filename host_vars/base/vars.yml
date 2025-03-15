@@ -21,6 +21,32 @@ zfs_main_pool_root_dataset_options:
   - "canmount=off"
 zfs_main_pool_encryption_passphrase: "{{ vault_zfs_main_pool_encryption_passphrase }}"
 
+# zfs_backup
+zfs_backup_pool_name: "backup"
+zfs_backup_pool_options:
+  - "ashift=12"
+  - "autotrim=on"
+zfs_backup_pool_mountpoint: "/backup"
+zfs_backup_pool_mode: ""
+zfs_backup_pool_devices:
+  - "/dev/disk/by-id/nvme-Lexar_SSD_NM790_4TB_NME618R001255P2202"
+zfs_backup_pool_root_dataset_options:
+  - "xattr=sa"
+  - "dnodesize=auto"
+  - "atime=off"
+  - "recordsize=1M"
+  - "snapdir=visible"
+  - "normalization=formD"
+  - "compression=lz4"
+
+restic_backup_path: "/backup"
+restic_backup_pass: "{{ vault_restic_backup_pass }}"
+restic_key_dir: "/keys/restic"
+restic_gcs_project_number: "{{ vault_restic_gcs_project_number }}"
+restic_gcs_bucket_name: "{{ vault_restic_gcs_bucket_name }}"
+restic_gcs_credentials_b64: "{{ vault_restic_gcs_credentials_b64 }}"
+restic_srces: ["/tank/samba"]
+
 # cockpit
 cockpit_server_is_primary: true
 

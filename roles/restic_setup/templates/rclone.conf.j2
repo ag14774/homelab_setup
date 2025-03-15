@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+[gcs_restic_backup]
+type = gcs
+project_number = {{ restic_setup_gcs_project_number }}
+service_account_file = {{ restic_setup_key_dir }}/gcs.json
+bucket_policy_only = true

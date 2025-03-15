@@ -1,0 +1,6 @@
+---
+# tasks file for restic_setup
+- name: Setup restic backups in debian
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true
