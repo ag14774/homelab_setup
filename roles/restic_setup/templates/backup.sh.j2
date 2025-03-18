@@ -13,7 +13,7 @@ export RESTIC_REPOSITORY="{{ restic_setup_backup_path }}"
 export RESTIC_PASSWORD_FILE="{{ restic_setup_key_dir }}/repo.key"
 
 {% for item in restic_setup_srces %}
-restic --verbose backup {{ item }}
+restic --verbose backup {{ item.path }}{{ ' --exclude ' if item.excludes | default([]) else '' }}{{  item.excludes | default([]) | join(' --exclude ') }}
 {% endfor %}
 
 restic forget --keep-weekly 2 --keep-monthly 6 --keep-yearly 2 --prune

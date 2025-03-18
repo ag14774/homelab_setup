@@ -45,7 +45,9 @@ restic_key_dir: "/keys/restic"
 restic_gcs_project_number: "{{ vault_restic_gcs_project_number }}"
 restic_gcs_bucket_name: "{{ vault_restic_gcs_bucket_name }}"
 restic_gcs_credentials_b64: "{{ vault_restic_gcs_credentials_b64 }}"
-restic_srces: ["/tank/samba"]
+restic_srces: 
+  - {"path": "/tank/samba"}
+  - {"path": "/tank/media", "excludes": ["/tank/media/media"]}
 
 # cockpit
 cockpit_server_is_primary: true
