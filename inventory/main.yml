@@ -1,7 +1,7 @@
 ---
 prod: # name of group
   hosts:
-    base: # hostname
+    base.home: # hostname
 
 dev:
   hosts:

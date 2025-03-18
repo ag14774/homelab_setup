@@ -1,6 +1,6 @@
 ---
 - name: Setup base homelab
-  hosts: base
+  hosts: base.home
 
   tasks:
     - name: Add backports for debian

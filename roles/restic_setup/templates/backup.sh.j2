@@ -16,4 +16,6 @@ export RESTIC_PASSWORD_FILE="{{ restic_setup_key_dir }}/repo.key"
 restic --verbose backup {{ item }}
 {% endfor %}
 
+restic forget --keep-weekly 2 --keep-monthly 6 --keep-yearly 2 --prune
+
 rclone sync --progress --metadata --create-empty-src-dirs --fast-list {{ restic_setup_backup_path }} gcs_restic_backup:{{ restic_setup_gcs_bucket_name }}/

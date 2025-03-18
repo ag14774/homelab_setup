@@ -1,5 +1,4 @@
 ---
-# TODO: also install rclone
 - name: Ensure that restic is installed
   ansible.builtin.apt:
     name:

@@ -48,7 +48,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.radarr-ui.entrypoints=web
-        - traefik.http.routers.radarr-ui.rule=Host(`radarr.home`)
+        - traefik.http.routers.radarr-ui.rule=Host(`radarr.home`) || Host(`movies.home`)
         - traefik.http.routers.radarr-ui.service=radarr-srvc
         # Tell Traefik to use the port 7878 to connect to `radarr`
         - traefik.http.services.radarr-srvc.loadbalancer.server.port=7878
@@ -72,7 +72,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.sonarr-ui.entrypoints=web
-        - traefik.http.routers.sonarr-ui.rule=Host(`sonarr.home`)
+        - traefik.http.routers.sonarr-ui.rule=Host(`sonarr.home`) || Host(`shows.home`)
         - traefik.http.routers.sonarr-ui.service=sonarr-srvc
         # Tell Traefik to use the port 8989 to connect to `sonarr`
         - traefik.http.services.sonarr-srvc.loadbalancer.server.port=8989
@@ -96,7 +96,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.bazarr-ui.entrypoints=web
-        - traefik.http.routers.bazarr-ui.rule=Host(`bazarr.home`)
+        - traefik.http.routers.bazarr-ui.rule=Host(`bazarr.home`) || Host(`subtitles.home`)
         - traefik.http.routers.bazarr-ui.service=bazarr-srvc
         # Tell Traefik to use the port 6767 to connect to `bazarr`
         - traefik.http.services.bazarr-srvc.loadbalancer.server.port=6767

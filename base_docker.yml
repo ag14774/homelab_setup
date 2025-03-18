@@ -1,6 +1,6 @@
 ---
 - name: Setup docker swarm on base
-  hosts: base
+  hosts: base.home
 
   tasks:
     - name: Install docker
@@ -27,8 +27,8 @@
         technitium_setup_dashboard_password: "{{ dns_dashboard_password }}"
         technitium_setup_smb_user: "{{ dns_smb_user }}"
         technitium_setup_smb_pass: "{{ (samba_users | items2dict(key_name='name', value_name='pass'))[dns_smb_user] }}"
-        # 'base' will always be the SMB/NAS server so even if we run this on another host, we want to use base's IP here
-        technitium_setup_smb_path: "//{{ hostvars['base']['ansible_default_ipv4']['address'] }}/{{ dns_smb_user }}"
+        # 'base.home' will always be the SMB/NAS server so even if we run this on another host, we want to use base's IP here
+        technitium_setup_smb_path: "//{{ hostvars['base.home']['ansible_default_ipv4']['address'] }}/{{ dns_smb_user }}"
 
     - name: Setup media stack
       ansible.builtin.import_role:
