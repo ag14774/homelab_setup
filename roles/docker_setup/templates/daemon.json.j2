@@ -1,0 +1,5 @@
+{
+  "dns": [
+    {{ docker_setup_dns | map('tojson') | list | join(',\n    ') }}
+  ]
+}

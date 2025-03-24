@@ -56,9 +56,13 @@ cockpit_server_is_primary: true
 samba_users: "{{ vault_samba_users }}"
 samba_root: "/tank/samba"
 
+# docker
+docker_dns: "{{ vault_docker_dns }}"
+
 # technitium
 dns_smb_user: "{{ vault_dns_smb_user }}"
 dns_dashboard_password: "{{ vault_dns_dashboard_password }}"
 
 # media
 media_path: "/tank/media"
+media_hw_acc_dev: ["/dev/dri/card0", "/dev/dri/renderD128"]  # Currently these have no effect

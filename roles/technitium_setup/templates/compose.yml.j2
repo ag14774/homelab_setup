@@ -10,8 +10,14 @@ services:
     ports:
       # - "5380:5380/tcp" #DNS web console (HTTP)
       # - "53443:53443/tcp" #DNS web console (HTTPS)
-      - "53:53/udp" #DNS service
-      - "53:53/tcp" #DNS service
+      - target: 53
+        published: 53
+        protocol: udp
+        mode: host
+      - target: 53
+        published: 53
+        protocol: tcp
+        mode: host
       # - "853:853/udp" #DNS-over-QUIC service
       # - "853:853/tcp" #DNS-over-TLS service
       # - "443:443/udp" #DNS-over-HTTPS service (HTTP/3)
@@ -46,7 +52,7 @@ services:
     sysctls:
       - net.ipv4.ip_local_port_range=1024 65000
     deploy:
-      replicas: 1
+      mode: global
       labels:
         - traefik.enable=true
         - traefik.http.routers.dns-homepage.entrypoints=web

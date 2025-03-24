@@ -6,7 +6,8 @@
     - name: Install docker
       ansible.builtin.import_role:
         name: docker_setup
-
+      vars:
+        docker_setup_dns: "{{ docker_dns }}"
     - name: Init a new swarm with default parameters
       community.docker.docker_swarm:
         state: present
@@ -41,4 +42,5 @@
         media_setup_bazarr_version: "{{ bazarr_version }}"
         media_setup_prowlarr_version: "{{ prowlarr_version }}"
         media_setup_media_path: "{{ media_path }}"
+        media_setup_hw_acc_dev: "{{ media_hw_acc_dev }}"
         media_setup_placement_hostname: 'base'

@@ -38,3 +38,11 @@
     name: ["docker-ce", "docker-ce-cli", "containerd.io", "docker-buildx-plugin", "docker-compose-plugin", "python3-docker"]
     state: present
     update_cache: true
+
+- name: Modify docker DNS
+  ansible.builtin.template:
+    src: templates/daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
