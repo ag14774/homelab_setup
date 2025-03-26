@@ -39,6 +39,9 @@ zfs_backup_pool_root_dataset_options:
   - "normalization=formD"
   - "compression=lz4"
 
+# sanoid
+sanoid_zfs_dataset: ["zroot", "tank", "backup"]
+
 restic_backup_path: "/backup"
 restic_backup_pass: "{{ vault_restic_backup_pass }}"
 restic_key_dir: "/keys/restic"

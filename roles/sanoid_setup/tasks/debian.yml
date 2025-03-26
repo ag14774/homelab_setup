@@ -1,0 +1,23 @@
+---
+- name: Ensure that sanoid is installed
+  ansible.builtin.apt:
+    name:
+      - "sanoid"
+    state: present
+    update_cache: true
+
+- name: Create directory for sanoid config
+  ansible.builtin.file:
+    path: "/etc/sanoid"
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy sanoid.conf file to /etc/sanoid/sanoid.conf
+  ansible.builtin.template:
+    src: templates/sanoid.conf.j2
+    dest: /etc/sanoid/sanoid.conf
+    owner: root
+    group: root
+    mode: '0644'

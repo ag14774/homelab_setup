@@ -66,6 +66,12 @@
         zfs_pool_mode: "{{ zfs_backup_pool_mode }}"
         zfs_pool_devices: "{{ zfs_backup_pool_devices }}"
 
+    - name: Setup sanoid ZFS snapshot policies
+      ansible.builtin.import_role:
+        name: sanoid_setup
+      vars:
+        sanoid_setup_zfs_datasets: "{{ sanoid_zfs_dataset }}"
+
     - name: Setup backups using restic
       ansible.builtin.import_role:
         name: restic_setup

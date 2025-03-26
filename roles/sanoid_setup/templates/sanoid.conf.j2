@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+
+{% for dataset in sanoid_setup_zfs_datasets %}
+[{{ dataset }}]
+use_template = production
+recursive = yes
+
+{% endfor %}
+
+[template_production]
+    frequently = 0
+    hourly = 36
+    daily = 30
+    monthly = 2
+    yearly = 0
+    autosnap = yes
+    autoprune = yes
