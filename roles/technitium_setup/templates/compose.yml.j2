@@ -61,13 +61,32 @@ services:
         # Tell Traefik to use the port 5380 to connect to `technitium`
         - traefik.http.services.technitium-srvc.loadbalancer.server.port=5380
 
+  mariadb_master:
+    image: "mariadb:{{ technitium_setup_mariadb_version }}"
+    networks:
+      - proxy_net
+    environment:
+      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/mariadb_root_password
+    secrets:
+      - mariadb_root_password
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == {{ technitium_setup_mariadb_master_placement_hostname }}
+
 secrets:
   technitium_password:
+    external: true
+  mariadb_root_password:
     external: true
 
 volumes:
     dns_config_vol:
       external: true  # External SMB volume that can be shared by replicas
+    mariadb_vol:
 
 networks:
   proxy_net:

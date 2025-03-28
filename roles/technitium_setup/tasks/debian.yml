@@ -31,6 +31,12 @@
     data: "{{ technitium_setup_dashboard_password }}"
     state: present
 
+- name: Create docker secret for MariaDB
+  community.docker.docker_secret:
+    name: mariadb_root_password
+    data: "{{ technitium_setup_mariadb_password }}"
+    state: present
+
 - name: Deploy DNS stack (Technitium)
   community.docker.docker_stack:
     state: present

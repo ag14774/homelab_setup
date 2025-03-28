@@ -4,6 +4,7 @@ traefik_version: v3.3 # version of traefik
 
 # Technitium
 technitium_version: "13.4.3"
+mariadb_version: "11.7.2"
 
 # Media
 jellyfin_version: "10.10.6"
