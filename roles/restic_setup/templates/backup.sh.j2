@@ -12,10 +12,14 @@ export PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 export RESTIC_REPOSITORY="{{ restic_setup_backup_path }}"
 export RESTIC_PASSWORD_FILE="{{ restic_setup_key_dir }}/repo.key"
 
+touch /root/backup.log
+
+date >> /root/backup.log
+
 {% for item in restic_setup_srces %}
-restic --verbose backup {{ item.path }}{{ ' --exclude ' if item.excludes | default([]) else '' }}{{  item.excludes | default([]) | join(' --exclude ') }}
+restic --verbose backup {{ item.path }}{{ ' --exclude ' if item.excludes | default([]) else '' }}{{  item.excludes | default([]) | join(' --exclude ') }} >> /root/backup.log
 {% endfor %}
 
-restic forget --keep-weekly 2 --keep-monthly 6 --keep-yearly 2 --prune
+restic forget --keep-weekly 2 --keep-monthly 6 --keep-yearly 2 --prune >> /root/backup.log
 
-rclone sync --progress --metadata --create-empty-src-dirs --fast-list {{ restic_setup_backup_path }} gcs_restic_backup:{{ restic_setup_gcs_bucket_name }}/
+rclone sync --progress --metadata --create-empty-src-dirs --fast-list {{ restic_setup_backup_path }} gcs_restic_backup:{{ restic_setup_gcs_bucket_name }}/ >> /root/backup.log
