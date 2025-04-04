@@ -18,6 +18,7 @@
       ansible.builtin.import_role:
         name: traefik_setup
       vars:
+        traefik_setup_socket_proxy_version: "{{ socket_proxy_version }}"
         traefik_setup_version: "{{ traefik_version }}"
 
     - name: Setup Technitium

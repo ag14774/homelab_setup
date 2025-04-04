@@ -4,14 +4,31 @@ version: "3.3"
 
 services:
 
+  dockerproxy:
+    image: "tecnativa/docker-socket-proxy:{{ traefik_setup_socket_proxy_version }}"
+    networks:
+      - dockerproxy_net
+    environment:
+      CONTAINERS: 1
+      SERVICES: 1
+      NETWORKS: 1
+      TASKS: 1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - "node.role == manager"
+
   traefik:
     image: "traefik:{{ traefik_setup_version }}"
     networks:
+      - dockerproxy_net
       - proxy_net
     ports:
       - "80:80"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik.toml:/etc/traefik/traefik.toml:ro"
     deploy:
       mode: global
@@ -22,3 +39,4 @@ services:
 networks:
   proxy_net:
     external: true
+  dockerproxy_net:

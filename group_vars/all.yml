@@ -1,5 +1,6 @@
 ---
 # Traefik
+socket_proxy_version: "0.3"
 traefik_version: v3.3 # version of traefik
 
 # Technitium
