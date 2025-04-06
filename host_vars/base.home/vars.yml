@@ -55,6 +55,13 @@ restic_srces:
 # cockpit
 cockpit_server_is_primary: true
 
+# Dyn DNS
+ddns_cf_email: "{{ vault_ddns_cf_email }}"
+ddns_cf_token: "{{ vault_ddns_cf_token }}"
+ddns_key_dir: "/keys/ddns"
+ddns_cf_zone_id: "{{ vault_ddns_cf_zone_id }}"
+ddns_cf_record_name: "{{ vault_ddns_cf_record_name }}"
+
 # samba
 samba_users: "{{ vault_samba_users }}"
 samba_root: "/tank/samba"

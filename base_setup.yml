@@ -84,6 +84,16 @@
         restic_setup_gcs_credentials_b64: "{{ restic_gcs_credentials_b64 }}"
         restic_setup_srces: "{{ restic_srces }}"
 
+    - name: Setup DynDNS using cron.daily
+      ansible.builtin.import_role:
+        name: ddns_setup
+      vars:
+        ddns_setup_email: "{{ ddns_cf_email }}"
+        ddns_setup_cf_token: "{{ ddns_cf_token }}"
+        ddns_setup_key_dir: "{{ ddns_key_dir }}"
+        ddns_setup_zone_id: "{{ ddns_cf_zone_id }}"
+        ddns_setup_record_name: "{{ ddns_cf_record_name }}"
+
     - name: Setup Samba server
       ansible.builtin.import_role:
         name: samba_setup

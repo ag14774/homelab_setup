@@ -1,0 +1,24 @@
+---
+- name: Create directory for Dyn DNS related keys
+  ansible.builtin.file:
+    path: "{{ ddns_setup_key_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Write Cloudflare token to file
+  ansible.builtin.copy:
+    content: "{{ ddns_setup_cf_token }}"
+    dest: "{{ ddns_setup_key_dir }}/token.key"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy DynDNS script to cron.daily
+  ansible.builtin.template:
+    src: templates/ddns.sh.j2
+    dest: "/etc/cron.daily/ddns"  # file should not have extension to work with cron
+    owner: root
+    group: root
+    mode: "0755"
