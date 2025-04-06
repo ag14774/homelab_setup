@@ -26,6 +26,7 @@ services:
     networks:
       - dockerproxy_net
       - proxy_net
+      - vpn_proxy_net
     ports:
       - "80:80"
     volumes:
@@ -38,5 +39,7 @@ services:
 
 networks:
   proxy_net:
+    external: true
+  vpn_proxy_net:
     external: true
   dockerproxy_net:

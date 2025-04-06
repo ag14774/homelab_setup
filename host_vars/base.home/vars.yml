@@ -70,3 +70,6 @@ mariadb_root_password: "{{ vault_mariadb_root_password }}"
 # media
 media_path: "/tank/media"
 media_hw_acc_dev: ["/dev/dri/card0", "/dev/dri/renderD128"]  # Currently these have no effect
+
+# vpn
+vpn_smb_user: "{{ vault_vpn_smb_user }}"

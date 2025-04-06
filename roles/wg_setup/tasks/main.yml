@@ -1,0 +1,6 @@
+---
+# tasks file for wg_setup
+- name: Setup WireGuard VPN (debian)
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

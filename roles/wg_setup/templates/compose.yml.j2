@@ -1,0 +1,49 @@
+# {{ ansible_managed }}
+
+version: "3.3"
+
+services:
+  wg_easy:
+    image: "ghcr.io/wg-easy/wg-easy:{{ wg_setup_version }}"
+    networks:
+      - vpn_proxy_net
+      - vpn_wg_net
+    environment:
+      - INSECURE=true  # Ok as dashboard will be accessible only internally
+    ports:
+      - target: 2052
+        published: 2052
+        protocol: udp
+        mode: host
+    volumes:
+      - vpn_config_vol:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.default.forwarding=1
+    deploy:
+      mode: global
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.vpn-homepage.entrypoints=web
+        - traefik.http.routers.vpn-homepage.rule=Host(`vpn.home`)
+        - traefik.http.routers.vpn-homepage.service=wg-srvc
+        # Tell Traefik to use the port 51821 to connect to `wg_easy`
+        - traefik.http.services.wg-srvc.loadbalancer.server.port=51821
+        - traefik.docker.network=vpn_proxy_net  # Need to specify network as it is different than the default
+
+volumes:
+    vpn_config_vol:
+      external: true  # External SMB volume that can be shared by replicas
+
+networks:
+  vpn_proxy_net:
+    external: true
+  vpn_wg_net:
+    external: true

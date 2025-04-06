@@ -1,0 +1,40 @@
+---
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/wg_easy"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy wg_easy compose file
+  ansible.builtin.template:
+    src: templates/compose.yml.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/wg_easy/compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+
+- name: Create a docker SMB volume
+  community.docker.docker_volume:
+    name: vpn_config_vol
+    state: present
+    recreate: "options-changed"
+    driver_options:
+      type: cifs
+      o: "username={{ wg_setup_smb_user }},password={{ wg_setup_smb_pass }},vers=3,nobrl"
+      device: "{{ wg_setup_smb_path }}"
+
+- name: Create overlay network for VPN (vpn_wg_net)
+  community.docker.docker_network:
+    name: vpn_wg_net
+    driver: overlay
+    enable_ipv6: true
+    state: present
+
+- name: Deploy WireGuard stack
+  community.docker.docker_stack:
+    state: present
+    name: vpn
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/wg_easy/compose.yml"

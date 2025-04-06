@@ -49,3 +49,13 @@
         media_setup_media_path: "{{ media_path }}"
         media_setup_hw_acc_dev: "{{ media_hw_acc_dev }}"
         media_setup_placement_hostname: 'base'
+
+    - name: Setup Wireguard VPN
+      ansible.builtin.import_role:
+        name: wg_setup
+      vars:
+        wg_setup_version: "{{ wg_version }}"
+        wg_setup_smb_user: "{{ vpn_smb_user }}"
+        wg_setup_smb_pass: "{{ (samba_users | items2dict(key_name='name', value_name='pass'))[vpn_smb_user] }}"
+        # 'base.home' will always be the SMB/NAS server so even if we run this on another host, we want to use base's IP here
+        wg_setup_smb_path: "//{{ hostvars['base.home']['ansible_default_ipv4']['address'] }}/{{ vpn_smb_user }}"

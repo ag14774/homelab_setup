@@ -5,6 +5,12 @@
     driver: overlay
     state: present
 
+- name: Create traefik overlay network for VPN
+  community.docker.docker_network:
+    name: vpn_proxy_net
+    driver: overlay
+    state: present
+
 - name: Create directory for compose file
   ansible.builtin.file:
     path: "{{ ansible_user_dir }}/docker_stacks/traefik"
