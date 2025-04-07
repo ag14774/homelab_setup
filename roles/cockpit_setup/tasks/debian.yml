@@ -1,7 +1,7 @@
 ---
 - name: Ensure that cockpit is installed
   ansible.builtin.apt:
-    name: "cockpit"
+    name: ["cockpit", "cockpit-storaged", "cockpit-sosreport", "cockpit-networkmanager", "cockpit-machines"]
     state: present
     default_release: "{{ ansible_distribution_release }}-backports"
     update_cache: true
