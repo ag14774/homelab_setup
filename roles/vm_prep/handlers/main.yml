@@ -1,0 +1,9 @@
+---
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart iptables-vm service
+  ansible.builtin.systemd:
+    name: iptables-vm.service
+    state: restarted

@@ -1,0 +1,6 @@
+---
+# tasks file for vm_prep
+- name: Setup directories and networking for VMs in debian
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

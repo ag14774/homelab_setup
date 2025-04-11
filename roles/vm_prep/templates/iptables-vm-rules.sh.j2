@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# {{ ansible_managed }}
+
+# Create chain if it doesn't exist
+iptables -N VM-TRAFFIC 2>/dev/null || true
+
+# Flush chain in case it already exists
+iptables -F VM-TRAFFIC
+
+# Add VM bridge-local rule
+iptables -A VM-TRAFFIC -i {{ vm_prep_virbr }} -o {{ vm_prep_virbr }} -j ACCEPT
+
+# Return to FORWARD chain
+iptables -A VM-TRAFFIC -j RETURN
+
+# Insert chain at the top of FORWARD, if not already present
+iptables -C FORWARD -j VM-TRAFFIC 2>/dev/null || iptables -I FORWARD 1 -j VM-TRAFFIC

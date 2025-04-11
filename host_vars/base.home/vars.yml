@@ -51,6 +51,7 @@ restic_gcs_credentials_b64: "{{ vault_restic_gcs_credentials_b64 }}"
 restic_srces: 
   - {"path": "/tank/samba"}
   - {"path": "/tank/media", "excludes": ["/tank/media/media"]}
+  - {"path": "/tank/other", "excludes": ["/tank/other/qcow"]}
 
 # cockpit
 cockpit_server_is_primary: true
@@ -65,6 +66,10 @@ ddns_cf_record_name: "{{ vault_ddns_cf_record_name }}"
 # samba
 samba_users: "{{ vault_samba_users }}"
 samba_root: "/tank/samba"
+
+# vm dirs
+vm_dir_root: "/tank/other"
+vm_virbr: "virbr0"
 
 # docker
 docker_dns: "{{ vault_docker_dns }}"

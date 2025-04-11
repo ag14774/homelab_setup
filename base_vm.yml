@@ -1,0 +1,14 @@
+---
+# Prerequisites:
+# 1) Run base_setup.yml first
+# 2) Use cockpit to setup a virtual bridge manually and make sure its name is correctly set as a variable
+- name: Setup base homelab
+  hosts: base.home
+
+  tasks:
+    - name: Setup VM directories
+      ansible.builtin.import_role:
+        name: vm_prep
+      vars:
+        vm_prep_root: "{{ vm_dir_root }}"
+        vm_prep_virbr: "{{ vm_virbr }}"

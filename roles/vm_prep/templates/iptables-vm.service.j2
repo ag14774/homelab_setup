@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=VM iptables rules
+After=network.target docker.service
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/iptables-vm-rules.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

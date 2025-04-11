@@ -1,0 +1,66 @@
+---
+- name: Ensure group "vmusers" exists
+  ansible.builtin.group:
+    name: "vmusers"
+    state: present
+
+- name: Create VM-related directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: vmusers
+    mode: "2770"
+  loop:
+    - "{{ vm_prep_root }}/iso"
+    - "{{ vm_prep_root }}/qcow"
+
+- name: Create directory for system storage pool for VM
+  ansible.builtin.file:
+    path: "{{ vm_prep_root }}/qcow/system"
+    state: directory
+    owner: root
+    group: libvirt-qemu
+    mode: "2770"
+
+- name: Create directory for user storage pool for VM
+  ansible.builtin.file:
+    path: "{{ vm_prep_root }}/qcow/user"
+    state: directory
+    owner: root
+    group: vmusers
+    mode: "2770"
+
+- name: Ensure iptables-vm-rules script exists
+  ansible.builtin.template:
+    src: templates/iptables-vm-rules.sh.j2
+    dest: /usr/local/sbin/iptables-vm-rules.sh
+    mode: '0755'
+    owner: root
+    group: root
+  notify:
+    - Restart iptables-vm service
+
+- name: Create systemd service for iptables VM rules
+  ansible.builtin.template:
+    src: templates/iptables-vm.service.j2
+    dest: /etc/systemd/system/iptables-vm.service
+    mode: '0644'
+    owner: root
+    group: root
+  notify:
+    - Reload systemd daemon
+    - Restart iptables-vm service
+
+- name: Ensure systemd daemon is reloaded (in case service file changed)
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start iptables-vm service
+  ansible.builtin.systemd:
+    name: iptables-vm.service
+    enabled: true
+    state: started
+
+- name: Inform about manual steps
+  ansible.builtin.debug:
+    msg: "Add all users that need to run VMs to groups vmusers, kvm, and libvirt. You might also need to add the user libvirt-qemu to the vmusers group"
