@@ -1,0 +1,6 @@
+---
+# tasks file for guac_setup
+- name: Setup Guacamole server (debian)
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true

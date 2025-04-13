@@ -1,0 +1,68 @@
+# {{ ansible_managed }}
+
+version: "3.3"
+
+services:
+  mariadb_master:
+    image: "mariadb:{{ guac_setup_mariadb_version }}"
+    networks:
+      - internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "{{ guac_setup_mariadb_root_pwd }}"
+      MARIADB_USER: "guacamole_user"
+      MARIADB_PASSWORD: "{{ guac_setup_mariadb_guac_pwd }}"
+      MARIADB_DATABASE: "guacamole_db"
+    configs:
+      - source: guac_init_db
+        target: /docker-entrypoint-initdb.d/init.sql
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == {{ guac_setup_mariadb_master_placement_hostname }}
+
+  guacd:
+    image: guacamole/guacd:{{ guac_setup_daemon_version }}
+    networks:
+      - internal
+    deploy:
+      replicas: 1
+
+  guacamole:
+    image: guacamole/guacamole:{{ guac_setup_web_version }}
+    networks:
+      - internal
+      - proxy_net
+    environment:
+      GUACD_HOSTNAME: "guacd"
+      MYSQL_HOSTNAME: "mariadb_master"
+      MYSQL_DATABASE: "guacamole_db"
+      MYSQL_USER: "guacamole_user"
+      MYSQL_PASSWORD: "{{ guac_setup_mariadb_guac_pwd }}"
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.guacamole-homepage.entrypoints=web
+        - traefik.http.routers.guacamole-homepage.rule=Host(`secretgarden.home`)
+
+        - traefik.http.routers.guacamole-homepage.middlewares=add-guacamole-prefix
+        - traefik.http.middlewares.add-guacamole-prefix.addprefix.prefix=/guacamole
+
+        - traefik.http.routers.guacamole-homepage.service=guacamole-srvc
+        # Tell Traefik to use the port 8080 to connect to `guacamole`
+        - traefik.http.services.guacamole-srvc.loadbalancer.server.port=8080
+
+configs:
+  guac_init_db:
+    external: true
+
+volumes:
+  mariadb_vol:
+
+networks:
+  proxy_net:
+    external: true
+  internal:

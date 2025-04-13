@@ -34,7 +34,7 @@
     dest: "{{ restic_setup_key_dir }}/repo.key"
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
 
 - name: Copy google cloud config to directory
   ansible.builtin.copy:
@@ -42,7 +42,7 @@
     dest: "{{ restic_setup_key_dir }}/gcs.json"
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
 
 - name: Copy rclone.conf file to /root/.config/rclone/rclone.conf
   ansible.builtin.template:
@@ -50,12 +50,12 @@
     dest: /root/.config/rclone/rclone.conf
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
 
 - name: Copy backup script to cron.weekly
   ansible.builtin.template:
     src: templates/backup.sh.j2
-    dest: "/etc/cron.weekly/backup"  # file should not have extension to work with cron
+    dest: "/etc/cron.weekly/backup" # file should not have extension to work with cron
     owner: root
     group: root
     mode: "0755"

@@ -1,0 +1,41 @@
+---
+- name: Ensure the caching directory guac_setup exists
+  ansible.builtin.file:
+    path: /root/.cache/guac_setup
+    state: directory
+    mode: "0700"
+
+- name: Generate init.sql using Docker if it does not exist
+  ansible.builtin.shell: |
+    docker run --rm guacamole/guacamole:{{ guac_setup_web_version }} /opt/guacamole/bin/initdb.sh --mysql > /root/.cache/guac_setup/init.sql
+  args:
+    creates: /root/.cache/guac_setup/init.sql
+
+- name: Create config with the init.sql file
+  community.docker.docker_config:
+    name: guac_init_db
+    data_src: /root/.cache/guac_setup/init.sql
+    state: present
+
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/guac_stack"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy guac stack compose file
+  ansible.builtin.template:
+    src: templates/compose.yml.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/guac_stack/compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+
+- name: Deploy guac stack
+  community.docker.docker_stack:
+    state: present
+    name: guac
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/guac_stack/compose.yml"

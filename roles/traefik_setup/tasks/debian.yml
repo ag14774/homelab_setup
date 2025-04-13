@@ -28,7 +28,7 @@
     mode: "0644"
   loop:
     - compose.yml
-    - traefik.toml  # this file is static and not modified by traefik. So we just copy it to each node
+    - traefik.toml # this file is static and not modified by traefik. So we just copy it to each node
 
 - name: Deploy proxy stack (traefik)
   community.docker.docker_stack:

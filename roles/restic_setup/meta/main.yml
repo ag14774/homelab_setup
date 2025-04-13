@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Andreas Georgiou
   description: Role to setup restic to a local folder with a GCS mirror backup

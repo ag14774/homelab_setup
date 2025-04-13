@@ -13,12 +13,12 @@
     dest: "{{ ddns_setup_key_dir }}/token.key"
     owner: root
     group: root
-    mode: '0600'
+    mode: "0600"
 
 - name: Copy DynDNS script to cron.daily
   ansible.builtin.template:
     src: templates/ddns.sh.j2
-    dest: "/etc/cron.daily/ddns"  # file should not have extension to work with cron
+    dest: "/etc/cron.daily/ddns" # file should not have extension to work with cron
     owner: root
     group: root
     mode: "0755"

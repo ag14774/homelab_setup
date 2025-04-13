@@ -1,0 +1,5 @@
+---
+# defaults file for guac_setup
+guac_setup_mariadb_version: "11.7.2"
+guac_setup_web_version: "1.5.5"
+guac_setup_daemon_version: "1.5.5"

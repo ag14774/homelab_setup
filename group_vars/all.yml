@@ -17,3 +17,8 @@ prowlarr_version: "1.31.2"
 
 # VPN
 wg_version: "15.0.0-beta.11"
+
+# VM Guacamole
+guac_mariadb_version: "11.7.2"
+guac_web_version: "1.5.5"
+guac_daemon_version: "1.5.5"

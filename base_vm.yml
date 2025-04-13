@@ -12,3 +12,10 @@
       vars:
         vm_prep_root: "{{ vm_dir_root }}"
         vm_prep_virbr: "{{ vm_virbr }}"
+
+    - name: Setup VM directories
+      ansible.builtin.import_role:
+        name: vm_prep
+      vars:
+        vm_prep_root: "{{ vm_dir_root }}"
+        vm_prep_virbr: "{{ vm_virbr }}"

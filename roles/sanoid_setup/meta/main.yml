@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Andreas Georgiou
   description: Role to setup sanoid for policy driven ZFS snapshots

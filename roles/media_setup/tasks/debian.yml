@@ -45,7 +45,7 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: "0644"
-  vars:  # Internal vars - should not be set by importers of this role
+  vars: # Internal vars - should not be set by importers of this role
     media_srvc_uid: "{{ getent_passwd['media_srvc'].1 }}"
     media_srvc_gid: "{{ getent_passwd['media_srvc'].2 }}"
 

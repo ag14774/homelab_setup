@@ -41,17 +41,16 @@ zfs_backup_pool_root_dataset_options:
 
 # sanoid
 sanoid_zfs_dataset: ["zroot", "tank", "backup"]
-
 restic_backup_path: "/backup"
 restic_backup_pass: "{{ vault_restic_backup_pass }}"
 restic_key_dir: "/keys/restic"
 restic_gcs_project_number: "{{ vault_restic_gcs_project_number }}"
 restic_gcs_bucket_name: "{{ vault_restic_gcs_bucket_name }}"
 restic_gcs_credentials_b64: "{{ vault_restic_gcs_credentials_b64 }}"
-restic_srces: 
-  - {"path": "/tank/samba"}
-  - {"path": "/tank/media", "excludes": ["/tank/media/media"]}
-  - {"path": "/tank/other", "excludes": ["/tank/other/qcow"]}
+restic_srces:
+  - { "path": "/tank/samba" }
+  - { "path": "/tank/media", "excludes": ["/tank/media/media"] }
+  - { "path": "/tank/other", "excludes": ["/tank/other/qcow"] }
 
 # cockpit
 cockpit_server_is_primary: true
@@ -81,7 +80,11 @@ mariadb_root_password: "{{ vault_mariadb_root_password }}"
 
 # media
 media_path: "/tank/media"
-media_hw_acc_dev: ["/dev/dri/card0", "/dev/dri/renderD128"]  # Currently these have no effect
+media_hw_acc_dev: ["/dev/dri/card0", "/dev/dri/renderD128"] # Currently these have no effect
 
 # vpn
 vpn_smb_user: "{{ vault_vpn_smb_user }}"
+
+# vm guac
+guac_mariadb_root_pwd: "{{ vault_guac_mariadb_root_pwd }}"
+guac_mariadb_guacusr_pwd: "{{ vault_guac_mariadb_guacusr_pwd }}"

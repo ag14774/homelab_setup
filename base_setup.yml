@@ -46,7 +46,7 @@
         state: present
         extra_zfs_properties:
           mountpoint: "/tank/other"
-          recordsize: 64K  # Also suitable for qcow2 images that have cluster_size=64K
+          recordsize: 64K # Also suitable for qcow2 images that have cluster_size=64K
       become: true
 
     - name: Create ZFS encrypted dataset
