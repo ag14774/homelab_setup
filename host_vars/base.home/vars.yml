@@ -85,6 +85,9 @@ media_hw_acc_dev: ["/dev/dri/card0", "/dev/dri/renderD128"] # Currently these ha
 # vpn
 vpn_smb_user: "{{ vault_vpn_smb_user }}"
 
+# utils docker
+utils_smb_user: "{{ vault_utils_smb_user }}"
+
 # vm guac
 guac_mariadb_root_pwd: "{{ vault_guac_mariadb_root_pwd }}"
 guac_mariadb_guacusr_pwd: "{{ vault_guac_mariadb_guacusr_pwd }}"

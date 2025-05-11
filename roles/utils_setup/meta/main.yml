@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  author: Andreas Georgiou
+  description: Setup other utils in docker such as Stirling PDF
+  license: MIT
+  min_ansible_version: "2.1"

@@ -1,0 +1,39 @@
+---
+- name: Create directory for compose file
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/docker_stacks/utils"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Copy docker compose file
+  ansible.builtin.template:
+    src: templates/compose.yml.j2
+    dest: "{{ ansible_user_dir }}/docker_stacks/utils/compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: "0644"
+
+- name: Create Stirling SMB volumes
+  community.docker.docker_volume:
+    name: utils_stirling_{{ item }}_vol
+    state: present
+    recreate: "options-changed"
+    driver_options:
+      type: cifs
+      o: "username={{ utils_setup_smb_user }},password={{ utils_setup_smb_pass }},vers=3"
+      device: "{{ utils_setup_smb_path }}/stirling/{{ item }}/"
+  loop:
+    - training_data
+    - extra_configs
+    - custom_files
+    - logs
+    - pipeline
+
+- name: Deploy utils stack
+  community.docker.docker_stack:
+    state: present
+    name: utils
+    compose:
+      - "{{ ansible_user_dir }}/docker_stacks/utils/compose.yml"

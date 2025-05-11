@@ -36,6 +36,16 @@
         technitium_setup_mariadb_password: "{{ mariadb_root_password }}"
         technitium_setup_mariadb_master_placement_hostname: "base"
 
+    - name: Setup miscellaneous utils
+      ansible.builtin.import_role:
+        name: utils_setup
+      vars:
+        utils_setup_stirling_version: "{{ stirling_version }}"
+        utils_setup_smb_user: "{{ utils_smb_user }}"
+        utils_setup_smb_pass: "{{ (samba_users | items2dict(key_name='name', value_name='pass'))[utils_smb_user] }}"
+        # 'base.home' will always be the SMB/NAS server so even if we run this on another host, we want to use base's IP here
+        utils_setup_smb_path: "//{{ hostvars['base.home']['ansible_default_ipv4']['address'] }}/{{ utils_smb_user }}"
+
     - name: Setup media stack
       ansible.builtin.import_role:
         name: media_setup

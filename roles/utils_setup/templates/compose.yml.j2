@@ -1,0 +1,45 @@
+# {{ ansible_managed }}
+
+version: "3.3"
+
+services:
+  stirling:
+    image: "docker.stirlingpdf.com/stirlingtools/stirling-pdf:{{ utils_setup_stirling_version }}"
+    networks:
+      - proxy_net
+    volumes:
+      - utils_stirling_training_data_vol:/usr/share/tessdata/:rw # Required for extra OCR languages
+      - utils_stirling_extra_configs_vol:/configs/:rw
+      - utils_stirling_custom_files_vol:/customFiles/:rw
+      - utils_stirling_logs_vol:/logs/:rw
+      - utils_stirling_pipeline_vol:/pipeline/:rw
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - LANGS=en_GB
+      - PUID=0
+      - PGID=0
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.stirling-homepage.entrypoints=web
+        - traefik.http.routers.stirling-homepage.rule=Host(`pdf.home`)
+        - traefik.http.routers.stirling-homepage.service=stirling-srvc
+        # Tell Traefik to use the port 8080 to connect to `stirling`
+        - traefik.http.services.stirling-srvc.loadbalancer.server.port=8080
+
+volumes:
+    utils_stirling_training_data_vol:
+      external: true  # External SMB volume that can be shared by replicas
+    utils_stirling_extra_configs_vol:
+      external: true
+    utils_stirling_custom_files_vol:
+      external: true
+    utils_stirling_logs_vol:
+      external: true
+    utils_stirling_pipeline_vol:
+      external: true
+
+networks:
+  proxy_net:
+    external: true

@@ -1,0 +1,6 @@
+---
+# tasks file for technitium_setup
+- name: Setup miscellaneous utilities in docker swarm (debian)
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+  become: true
