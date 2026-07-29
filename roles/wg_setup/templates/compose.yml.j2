@@ -36,7 +36,7 @@ services:
         - traefik.http.routers.vpn-homepage.service=wg-srvc
         # Tell Traefik to use the port 51821 to connect to `wg_easy`
         - traefik.http.services.wg-srvc.loadbalancer.server.port=51821
-        - traefik.docker.network=vpn_proxy_net  # Need to specify network as it is different than the default
+        - traefik.swarm.network=vpn_proxy_net  # Need to specify network as it is different than the default
 
 volumes:
     vpn_config_vol:
