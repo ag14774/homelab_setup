@@ -1,20 +1,32 @@
-[tool.poetry]
+[project]
 name = "homelab-setup"
 version = "0.1.0"
 description = ""
-authors = ["Andreas Georgiou"]
+authors = [{ name = "Andreas Georgiou" }]
+requires-python = ">=3.11,<4"
 readme = "README.md"
-package-mode = false
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "ansible>=11.1.0,<12",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-ansible = "^11.1.0"
+[dependency-groups]
+dev = [
+    "ansible-dev-tools>=24.12.0,<25",
+    "ansible-lint>=24.12.2,<25 ; platform_system != 'Windows'",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-ansible-dev-tools = "^24.12.0"
-ansible-lint = {version = "^24.12.2", markers = "platform_system != 'Windows'"}
+[tool.uv]
+package = false
+default-groups = "all"
+environments = ["platform_system != 'Windows'"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
